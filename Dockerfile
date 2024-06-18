@@ -30,7 +30,7 @@ RUN apt update && \
     apt install -y python${VERSION_PYTHON} && \
     apt install -y python${VERSION_PYTHON}-distutils && \
     apt install -y python3.9-dev && \
-	apt install -y python3-pip\
+	apt install -y python3-pip && \
     apt install -y git
 
 
