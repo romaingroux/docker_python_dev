@@ -1,1 +1,1 @@
-docker build -t 'python3.9-dev-ubuntu' .
+docker build -t 'python3.12-ubuntu' .
