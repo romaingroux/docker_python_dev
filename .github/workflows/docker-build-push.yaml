@@ -34,7 +34,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
 
   push_image:
-    name: Build and Push Docker Image to Docker Hub (on Tag of main)
+    name: Build and Push Docker Image to Docker Hub (on Tag of master)
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
@@ -43,20 +43,20 @@ jobs:
         with:
           fetch-depth: 0  # Needed to compare commits
 
-      - name: Ensure tag is pointing to main's latest commit
+      - name: Ensure tag is pointing to master's latest commit
         id: check_tag
         run: |
           TAG_COMMIT=$(git rev-list -n 1 $GITHUB_REF)
-          MAIN_COMMIT=$(git rev-parse origin/main)
+          MASTER_COMMIT=$(git rev-parse origin/master)
 
           echo "Tag commit: $TAG_COMMIT"
-          echo "Main commit: $MAIN_COMMIT"
+          echo "Master commit: $MASTER_COMMIT"
 
-          if [ "$TAG_COMMIT" != "$MAIN_COMMIT" ]; then
-            echo "Tag does not point to the latest commit on main. Skipping push."
+          if [ "$TAG_COMMIT" != "$MASTER_COMMIT" ]; then
+            echo "Tag does not point to the latest commit on master. Skipping push."
             echo "should_push=false" >> $GITHUB_OUTPUT
           else
-            echo "Tag points to the latest commit on main."
+            echo "Tag points to the latest commit on master."
             echo "should_push=true" >> $GITHUB_OUTPUT
           fi
 
