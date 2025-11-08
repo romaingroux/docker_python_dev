@@ -1,29 +1,36 @@
-FROM ubuntu@sha256:aa772c98400ef833586d1d517d3e8de670f7e712bf581ce6053165081773259d
+FROM ubuntu:24.04
+
 SHELL ["/bin/bash", "-c"]
 
-ENV CONTAINER_NAME="python3.12-ubuntu"
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
-ENV PATH="/usr/local/bin:$PATH"
+# Environment setup
+ENV DEBIAN_FRONTEND=noninteractive \
+    LC_ALL=C.UTF-8 \
+    LANG=C.UTF-8 \
+    PYENV_ROOT="/root/.pyenv" \
+    PATH="/root/.pyenv/bin:/root/.pyenv/shims:/root/.local/bin:/usr/local/bin:$PATH"
 
-# version numbers
-ARG VERSION_PYTHON="3.12"
+# Version arguments
+ARG VERSION_PYTHON="3.12.7"
 ARG VERSION_POETRY="2.2.1"
 
-# install python and dev tools
+# # install pyenv, python and dev tools
 RUN apt update && \
-    apt install -y software-properties-common curl && \
-    add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt update && \
-    export DEBIAN_FRONTEND=noninteractive && \
-    apt install -y \
-        python${VERSION_PYTHON} \
-        python${VERSION_PYTHON}-venv \
-        python${VERSION_PYTHON}-dev \
-        build-essential && \
-    curl -sS https://bootstrap.pypa.io/get-pip.py | python${VERSION_PYTHON} && \
-    curl -sSL https://install.python-poetry.org | POETRY_VERSION=${VERSION_POETRY} python${VERSION_PYTHON} - && \
-    echo -e '\nexport PATH="/root/.local/bin:$PATH"' >> ~/.bashrc
+    apt install -y --no-install-recommends \
+        make build-essential git curl ca-certificates \
+        libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
+        wget llvm libncursesw5-dev xz-utils tk-dev libxml2-dev \
+        libxmlsec1-dev libffi-dev liblzma-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    # Install pyenv
+    git clone https://github.com/pyenv/pyenv.git "$PYENV_ROOT" && \
+    # Install desired Python version
+    pyenv install ${VERSION_PYTHON} && \
+    pyenv global ${VERSION_PYTHON} && \
+    # Install Poetry
+    curl -sSL https://install.python-poetry.org | POETRY_VERSION=${VERSION_POETRY} python -
 
-# clean caches
-RUN apt clean
+# Set working directory
+WORKDIR /workspace
+
+# Default command
+CMD ["/bin/bash"]
