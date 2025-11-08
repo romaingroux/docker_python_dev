@@ -1,1 +1,1 @@
-docker build -t 'python3.12-ubuntu' .
+docker build -t 'rgroux/python-dev-ubuntu:3.12' .
