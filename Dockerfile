@@ -27,8 +27,9 @@ RUN apt update && \
     pyenv install ${VERSION_PYTHON} && \
     pyenv global ${VERSION_PYTHON} && \
     # Install Poetry
-    curl -sSL https://install.python-poetry.org | POETRY_VERSION=${VERSION_POETRY} python -
-
+    curl -sSL https://install.python-poetry.org | POETRY_VERSION=${VERSION_POETRY} python - && \
+    # make poetry globally available
+    ln -s /root/.local/bin/poetry /usr/local/bin/poetry
 # Set working directory
 WORKDIR /workspace
 
